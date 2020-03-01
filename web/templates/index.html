@@ -1,69 +1,174 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Web TLS Profiler</title>
+    <meta charset="UTF-8">
+    <title>Web TLS Profiler</title>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <!-- Material design library -->
+    <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body>
-    <h1>Web TLS Profiler</h1>
-    <form action="/">
-        <label for="domain">Enter domain name:</label><br>
-        <input type="text" id="domain" name="domain">
-        <select id="profile" name="profile">
-            <option value="modern">Modern</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="old">Old</option>
-        </select>
-        <br>
-        <input type="submit" value="Submit">
-    </form>
+    <header class="mdc-top-app-bar">
+      <div class="mdc-top-app-bar__row">
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+          <span class="mdc-top-app-bar__title">Web TLS Profiler</span>
+        </section>
+      </div>
+    </header>
 
-    <h2>Results</h2>
-    <h3>Profile Errors</h3>
-    <ul>
-    {% if result.profile_errors %}
-    {% for res in result.profile_errors %}
-        <li>{{ res }}</li>
-    {% endfor %}
-    {% else %}
-        <li>All good ;)</li>
-    {% endif %}
-    </ul>
-    <br>
-    <h3>Validation Errors</h3>
-    <ul>
-    {% if result.validation_errors %}
-    {% for res in result.validation_errors %}
-        <li>{{ res }}</li>
-    {% endfor %}
-    {% else %}
-        <li>All good ;)</li>
-    {% endif %}
-    </ul>
+    <div class="row custom-row mdc-top-app-bar--fixed-adjust">
+        <div class="coll-12 col-md-6">
+            <div class="mdc-card custom-card">
+                <h2>Web TLS Profiler</h2>
+                <p>Description</p>
+            </div>
+        </div>
+        <div class="coll-12 col-md-6">
+            <div class="mdc-card custom-card">
+                <h2>Run TLS Profiler Scan</h2>
+                <label class="mdc-text-field" style="max-width: 400px;" >
+                    <div class="mdc-text-field__ripple"></div>
+                    <input id="domain" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+                    <span class="mdc-floating-label" id="my-label-id">Enter domain</span>
+                    <div class="mdc-line-ripple"></div>
+                </label>
+                <div class="mdc-form-field">
+                    <div class="mdc-select">
+                          <div class="mdc-select__anchor demo-width-class">
+                            <i class="mdc-select__dropdown-icon"></i>
+                            <div class="mdc-select__selected-text"></div>
+                            <span class="mdc-floating-label">Choose a profile:</span>
+                            <div class="mdc-line-ripple"></div>
+                          </div>
 
-    <br>
-    <h3>Certificate Warnings</h3>
-    <ul>
-    {% if result.cert_warnings %}
-    {% for res in result.cert_warnings %}
-        <li>{{ res }}</li>
-    {% endfor %}
-    {% else %}
-        <li>All good ;)</li>
-    {% endif %}
-    </ul>
-    <br>
-    <h3>Vulnerability Errors</h3>
-    <ul>
-    {% if result.vulnerability_errors %}
-    {% for res in result.vulnerability_errors %}
-        <li>{{ res }}</li>
-    {% endfor %}
-    {% else %}
-        <li>All good ;)</li>
-    {% endif %}
-    </ul>
+                          <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                            <ul class="mdc-list">
+                                <li class="mdc-list-item" data-value="modern" aria-selected="true">
+                                    Modern
+                                </li>
+                                <li class="mdc-list-item" data-value="intermediate">
+                                    Intermediate
+                                </li>
+                                <li class="mdc-list-item" data-value="old">
+                                    Old
+                                </li>
+                            </ul>
+                          </div>
+                    </div>
+                </div>
+                <button class="mdc-button" style="width: 200px;" onclick="submit()">
+                    <div class="mdc-button__ripple"></div>
+                    <span class="mdc-button__label">Submit</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <h2 style="margin-left: 25px;">Results</h2>
+    <div class="row custom-row">
+        <div class="col-12 col-lg-3 col-md-6">
+            <div class="mdc-card custom-card">
+                <h3>Profile Errors</h3>
+                <ul>
+                {% if result.profile_errors %}
+                {% for res in result.profile_errors %}
+                    <li>{{ res }}</li>
+                {% endfor %}
+                {% else %}
+                    <li>All good ;)</li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3 col-md-6">
+            <div class="mdc-card custom-card">
+            <h3>Validation Errors</h3>
+                <ul>
+                {% if result.validation_errors %}
+                {% for res in result.validation_errors %}
+                    <li>{{ res }}</li>
+                {% endfor %}
+                {% else %}
+                    <li>All good ;)</li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3 col-md-6">
+            <div class="mdc-card custom-card">
+                <h3>Certificate Warnings</h3>
+                <ul>
+                {% if result.cert_warnings %}
+                {% for res in result.cert_warnings %}
+                    <li>{{ res }}</li>
+                {% endfor %}
+                {% else %}
+                    <li>All good ;)</li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-lg-3 col-md-6">
+            <div class="mdc-card custom-card">
+                <h3>Vulnerability Errors</h3>
+                <ul>
+                {% if result.vulnerability_errors %}
+                {% for res in result.vulnerability_errors %}
+                    <li>{{ res }}</li>
+                {% endfor %}
+                {% else %}
+                    <li>All good ;)</li>
+                {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
 </body>
+
+<script>
+    mdc.autoInit();
+    mdc.select.MDCSelect.attachTo(document.querySelector('.mdc-select'));
+    mdc.textField.MDCTextField.attachTo(document.querySelector('.mdc-text-field'));
+
+    const profile = new mdc.select.MDCSelect(document.querySelector(".mdc-select"));
+    const domain = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field'));
+
+    function submit() {
+        domain_value = document.getElementById("domain").value;
+        window.location.href = "http://localhost:8000/?domain="+domain_value+"&profile="+profile.value;
+    }
+</script>
+<style>
+    body {
+        background-color: #f5f5f5;
+    }
+    .custom-card {
+        margin-top: 10px;
+        padding: 5px;
+    }
+    .custom-row {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    .demo-width-class {
+        width: 300px;
+    }
+</style>
 
 </html>
