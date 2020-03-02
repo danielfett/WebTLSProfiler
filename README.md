@@ -5,8 +5,10 @@ Python package.
 
 ## Screenshots
 
-- Desktop version:
+**Desktop version:**
+<br>
 ![desktop screenshot](doc/web_screenshot.png)
 
-- Mobile version:
-<img src="doc/mobile_screenshot.jpg" width="300px" style="margin-left: 40px;"/>
+**Mobile version:**
+<br>
+<img src="doc/mobile_screenshot.jpg" width="300px"/>
