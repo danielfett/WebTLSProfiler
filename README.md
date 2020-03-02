@@ -9,4 +9,4 @@ Python package.
 ![desktop screenshot](doc/web_screenshot.png)
 
 - Mobile version:
-<img src="doc/mobile_screenshot.jpg" width="200px"/>
+<img src="doc/mobile_screenshot.jpg" width="300px" style="margin-left: 40px;"/>
