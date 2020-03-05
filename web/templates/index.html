@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <meta name="theme-color" content="#6200EE">
 
     <title>Web TLS Profiler</title>
@@ -39,14 +39,14 @@
             <div class="mdc-card custom-card">
                 <p>The <strong>Web TLS Profiler</strong> is a web interface for the TLS Profiler Python package.
                     The TLS Profiler scans the TLS settings of a webserver and compares the configuration with a
-                    Mozilla TLS Profile. <br>There are three different profiles that have different security levels and
-                    different range of client support. The Old profile has the best support for legacy clients and
+                    Mozilla TLS Profile. <br>Mozilla provides three TLS profiles for a different security need and
+                    client support. The Old profile has the best support for legacy clients and
                     the Modern profile provides the highest level of security. You can find a detailed description of
                     the profiles on the Mozilla wiki page
                     <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" target="_blank">Security/Server Side TLS</a>.
                     <br>Just enter your domain address in the form field and choose a profile from the dropdown menu.
                 </p>
-                <div class="alert alert-warning">
+                <div class="alert alert-warning custom-warning">
                     <p><strong>Note:</strong> You have to own the server you want to scan.</p>
                 </div>
             </div>
@@ -54,40 +54,43 @@
         <div class="coll-md-12 col-lg-6 custom-col">
             <div class="mdc-card custom-card">
                 <h2>Run TLS Profiler Scan</h2>
-                <label class="mdc-text-field custom-form">
-                    <div class="mdc-text-field__ripple"></div>
-                    <input id="domain" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-                    <span class="mdc-floating-label" id="my-label-id">Enter domain</span>
-                    <div class="mdc-line-ripple"></div>
-                </label>
 
-                <div class="mdc-select custom-form">
-                    <div class="mdc-select__anchor profile-select">
-                        <i class="mdc-select__dropdown-icon"></i>
-                        <div class="mdc-select__selected-text"></div>
-                        <span class="mdc-floating-label">Choose a Mozilla TLS Profile:</span>
+                <div class="custom-form">
+                    <label class="mdc-text-field form-element">
+                        <div class="mdc-text-field__ripple"></div>
+                        <input id="domain" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
+                        <span class="mdc-floating-label" id="my-label-id">Enter domain</span>
                         <div class="mdc-line-ripple"></div>
+                    </label>
+
+                    <div class="mdc-select">
+                        <div class="mdc-select__anchor form-element">
+                            <i class="mdc-select__dropdown-icon"></i>
+                            <div class="mdc-select__selected-text"></div>
+                            <span class="mdc-floating-label">Choose a Mozilla TLS Profile:</span>
+                            <div class="mdc-line-ripple"></div>
+                        </div>
+
+                        <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                            <ul class="mdc-list">
+                                <li class="mdc-list-item" data-value="modern" aria-selected="true">
+                                    Modern
+                                </li>
+                                <li class="mdc-list-item" data-value="intermediate">
+                                    Intermediate
+                                </li>
+                                <li class="mdc-list-item" data-value="old">
+                                    Old
+                                </li>
+                            </ul>
+                        </div>
                     </div>
 
-                    <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
-                        <ul class="mdc-list">
-                            <li class="mdc-list-item" data-value="modern" aria-selected="true">
-                                Modern
-                            </li>
-                            <li class="mdc-list-item" data-value="intermediate">
-                                Intermediate
-                            </li>
-                            <li class="mdc-list-item" data-value="old">
-                                Old
-                            </li>
-                        </ul>
-                    </div>
+                    <button class="mdc-button mdc-button--raised form-element" onclick="submit()">
+                        <div class="mdc-button__ripple"></div>
+                        <span class="mdc-button__label">Submit</span>
+                    </button>
                 </div>
-
-                <button class="mdc-button mdc-button--raised custom-form" onclick="submit()">
-                    <div class="mdc-button__ripple"></div>
-                    <span class="mdc-button__label">Submit</span>
-                </button>
             </div>
         </div>
     </div>
@@ -193,18 +196,36 @@
         margin-left: 1px;
         margin-right: 1px;
     }
-    .custom-form {
-        margin-top: 10px;
-        margin-bottom: 10px;
-        margin-left: 10px;
-        max-width: 400px;
-    }
-    .profile-select {
-        width: 400px;
+
+    @media (min-width: 992px) {
+        .custom-form {
+            margin-left: 20px;
+            margin-top: 20px;
+            margin-bottom: 0;
+            max-width: 400px;
+        }
+     }
+     @media (max-width: 991px) {
+        .custom-form {
+            margin: auto;
+            margin-top: 20px;
+            margin-bottom: 0;
+            width: 95%;
+            max-width: 400px;
+        }
+     }
+
+    .form-element {
+        margin-bottom: 20px;
+        width: 100%;
     }
     .title {
         margin-top: 25px;
         margin-left: 20px;
+    }
+    .custom-warning {
+        padding-bottom: 0;
+        margin-bottom: 0;
     }
 </style>
 

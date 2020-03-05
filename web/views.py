@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpRequest
 from celery.decorators import task
 import dataclasses
+import validators
 
 from tlsprofiler import TLSProfiler, TLSProfilerResult
 
@@ -22,11 +23,11 @@ def index(request: HttpRequest):
     if "domain" in request.GET and "profile" in request.GET:
         domain = request.GET["domain"]
         profile = request.GET["profile"]
-        if domain and profile in _PROFILES:
+        if validators.domain(domain) and profile in _PROFILES:
             print(domain)
             print(profile)
             task_result = run_scan.delay(domain, profile)
             result = task_result.get()
-            return render(request, "index.html", {"result": result})
+            return render(request, "index.html", {"result": result, "domain_txt": domain})
 
     return render(request, "index.html")

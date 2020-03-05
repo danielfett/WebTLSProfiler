@@ -1,3 +1,4 @@
 Django
 celery
 redis
+validators

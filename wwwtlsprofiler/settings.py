@@ -25,7 +25,7 @@ SECRET_KEY = 's3=mzi$r)+shs3$iz2!1@h7u51o6eul#y!qzlgok37xzva2_(q'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["192.168.170.30"]
 
 
 # Application definition
