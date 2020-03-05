@@ -6,7 +6,6 @@ import validators
 
 from tlsprofiler import TLSProfiler, TLSProfilerResult
 
-# Create your views here.
 
 _PROFILES = ["modern", "intermediate", "old"]
 
@@ -20,14 +19,23 @@ def run_scan(domain: str, profile: str) -> TLSProfilerResult:
 
 
 def index(request: HttpRequest):
-    if "domain" in request.GET and "profile" in request.GET:
-        domain = request.GET["domain"]
-        profile = request.GET["profile"]
-        if validators.domain(domain) and profile in _PROFILES:
-            print(domain)
-            print(profile)
-            task_result = run_scan.delay(domain, profile)
-            result = task_result.get()
-            return render(request, "index.html", {"result": result, "domain_txt": domain})
+    domain = ""
+    profile = ""
+    result = None
 
-    return render(request, "index.html")
+    if "domain" in request.GET:
+        domain = request.GET["domain"]
+
+    if "profile" in request.GET:
+        profile = request.GET["profile"]
+
+    if validators.domain(domain) and profile in _PROFILES:
+        print(f"Scan domain {domain} with the profile {profile}")
+        task_result = run_scan.delay(domain, profile)
+        result = task_result.get()
+
+    return render(
+        request,
+        "index.html",
+        {"result": result, "domain_name": domain, "profile_name": profile},
+    )

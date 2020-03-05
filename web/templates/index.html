@@ -58,8 +58,8 @@
                 <div class="custom-form">
                     <label class="mdc-text-field form-element">
                         <div class="mdc-text-field__ripple"></div>
-                        <input id="domain" class="mdc-text-field__input" type="text" aria-labelledby="my-label-id">
-                        <span class="mdc-floating-label" id="my-label-id">Enter domain</span>
+                        <input id="domain" class="mdc-text-field__input" type="text" value="{{ domain_name|default_if_none:"" }}" aria-labelledby="my-label-id">
+                        <span class="mdc-floating-label {% if domain_name %} mdc-floating-label--float-above {% endif %}" id="my-label-id">Enter domain</span>
                         <div class="mdc-line-ripple"></div>
                     </label>
 
@@ -71,15 +71,15 @@
                             <div class="mdc-line-ripple"></div>
                         </div>
 
-                        <div class="mdc-select__menu mdc-menu mdc-menu-surface demo-width-class">
+                        <div class="mdc-select__menu mdc-menu mdc-menu-surface form-element">
                             <ul class="mdc-list">
-                                <li class="mdc-list-item" data-value="modern" aria-selected="true">
+                                <li class="mdc-list-item {% if profile_name == "modern" %} mdc-list-item--selected {% endif %}" data-value="modern" aria-selected="true">
                                     Modern
                                 </li>
-                                <li class="mdc-list-item" data-value="intermediate">
+                                <li class="mdc-list-item {% if profile_name == "intermediate" %} mdc-list-item--selected {% endif %}" data-value="intermediate">
                                     Intermediate
                                 </li>
-                                <li class="mdc-list-item" data-value="old">
+                                <li class="mdc-list-item {% if profile_name == "old" %} mdc-list-item--selected {% endif %}" data-value="old">
                                     Old
                                 </li>
                             </ul>
