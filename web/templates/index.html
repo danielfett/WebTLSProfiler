@@ -35,7 +35,7 @@
     </header>
 
     <div class="row custom-row mdc-top-app-bar--fixed-adjust">
-        <div class="coll-md-12 col-lg-6 custom-col">
+        <div class="col-12 col-md-6 custom-col">
             <div class="mdc-card custom-card">
                 <p>The <strong>Web TLS Profiler</strong> is a web interface for the TLS Profiler Python package.
                     The TLS Profiler scans the TLS settings of a webserver and compares the configuration with a
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <div class="coll-md-12 col-lg-6 custom-col">
+        <div class="col-12 col-md-6 custom-col">
             <div class="mdc-card custom-card">
                 <h2>Run TLS Profiler Scan</h2>
 
@@ -86,10 +86,21 @@
                         </div>
                     </div>
 
-                    <button class="mdc-button mdc-button--raised form-element" onclick="submit()">
+                    <button class="mdc-button mdc-button--raised form-element" id="submit">
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">Submit</span>
                     </button>
+
+                    <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate mdc-linear-progress--closed" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0">
+                            <div class="mdc-linear-progress__buffering-dots"></div>
+                            <div class="mdc-linear-progress__buffer"></div>
+                            <div class="mdc-linear-progress__bar mdc-linear-progress__primary-bar">
+                                <span class="mdc-linear-progress__bar-inner"></span>
+                            </div>
+                            <div class="mdc-linear-progress__bar mdc-linear-progress__secondary-bar">
+                                <span class="mdc-linear-progress__bar-inner"></span>
+                            </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -97,7 +108,7 @@
 
     <h2 class="title">Results</h2>
     <div class="row custom-row">
-        <div class="col-md-12 col-lg-6 col-xl-3 custom-col">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
             <div class="mdc-card custom-card">
                 <h3>Profile Errors</h3>
                 <ul>
@@ -111,7 +122,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-3 custom-col">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
             <div class="mdc-card custom-card">
             <h3>Validation Errors</h3>
                 <ul>
@@ -125,7 +136,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-3 custom-col">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
             <div class="mdc-card custom-card">
                 <h3>Certificate Warnings</h3>
                 <ul>
@@ -139,7 +150,7 @@
                 </ul>
             </div>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-3 custom-col">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
             <div class="mdc-card custom-card">
                 <h3>Vulnerability Errors</h3>
                 <ul>
@@ -156,7 +167,7 @@
     </div>
     <h2 class="title">About</h2>
     <div class="row custom-row">
-        <div class="col-md-12 col-lg-6 col-xl-3 custom-col">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
             <div class="mdc-card custom-card">
                 <p>The TLS Profiler was developed by Daniel Fett and Fabian Hauck.
                     You can find it's source code on <a href="https://github.com/danielfett/tlsprofiler" target="_blank">GitHub</a>.
@@ -173,11 +184,37 @@
 
     const profile = new mdc.select.MDCSelect(document.querySelector(".mdc-select"));
     const domain = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field'));
+    const progress = new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));
 
-    function submit() {
+    var request = 0; // use counter to prevent to many GET request if multiple scans were requested
+
+    $("#submit").click(function() {
         domain_value = document.getElementById("domain").value;
-        window.location.href = "/?domain="+domain_value+"&profile="+profile.value;
+        $.ajax({url: "start", type: "get", data: {domain: domain_value, profile: profile.value}, success: function (result) {
+            if (result === "1") {
+                request++;
+                progress.open();
+                waitForResult(request);
+            }
+        }});
+    });
+
+    function waitForResult(i) {
+        if(i === request) {
+            $.ajax({
+                url: "ready", type: "get", success: async function (result) {
+                    if (result === "1") {
+                        progress.close();
+                        location.reload();
+                    } else {
+                        await new Promise(r => setTimeout(r, 2000));
+                        waitForResult(i);
+                    }
+                }
+            });
+        }
     }
+
 </script>
 
 <style>

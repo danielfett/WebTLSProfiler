@@ -18,5 +18,7 @@ from django.urls import path
 from web import views
 
 urlpatterns = [
-    path('', views.index),
+    path("", views.index),
+    path("ready", views.task_ready),
+    path("start", views.start_task),
 ]
