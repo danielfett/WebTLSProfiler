@@ -67,6 +67,13 @@ def start_task(request: HttpRequest):
         and profile in _PROFILES
         and (domain != sess_domain or profile != sess_profile)
     ):
+        # terminate an already running task
+        if "task_id" in request.session:
+            task_id = request.session["task_id"]
+            async_result = AsyncResult(task_id)
+            if not async_result.ready():
+                async_result.revoke(terminate=True)
+
         print(f"Scan domain {domain} with the profile {profile}")
         task_result = run_scan.delay(domain, profile)
 
