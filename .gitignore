@@ -1,3 +1,4 @@
 .idea/
 *.sqlite3
 celerybeat-schedule
+wwwtlsprofiler/settings_local.py
