@@ -1,6 +1,6 @@
 FROM python:3.7-buster
 
-RUN apt update && apt install -y git redis
+RUN apt-get update && apt-get install -y git
 
 WORKDIR /usr/src
 
@@ -16,11 +16,18 @@ RUN invoke build.all
 
 RUN pip install .
 
-WORKDIR /usr/src/webtlsprofiler
-
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
+
+FROM python:3.7-slim-buster
+
+RUN apt-get update && apt-get install -y redis && apt-get clean
+RUN pip install gunicorn
+
+COPY --from=0 /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
+
+WORKDIR /usr/src/webtlsprofiler
 
 COPY . .
 
