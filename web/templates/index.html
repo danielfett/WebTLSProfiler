@@ -51,6 +51,7 @@
         <div class="col-12 col-md-6 custom-col">
             <div class="mdc-card custom-card">
                 <h2>Run TLS Profiler Scan</h2>
+                <small>Current estimated wait time: {{ waiting_scans }} minutes</small>
 
                 <div class="custom-form">
                     <label class="mdc-text-field form-element">
@@ -87,6 +88,7 @@
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">Submit</span>
                     </button>
+                    <small id="scanstatus"></small>
 
                     <div role="progressbar" class="mdc-linear-progress mdc-linear-progress--indeterminate mdc-linear-progress--closed" aria-label="Example Progress Bar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0">
                             <div class="mdc-linear-progress__buffering-dots"></div>
@@ -187,11 +189,13 @@
 
     $("#submit").click(function() {
         domain_value = document.getElementById("domain").value;
-        $.ajax({url: "start", type: "get", data: {domain: domain_value, profile: profile.value}, success: function (result) {
-            if (result === "1") {
+        $.ajax({url: "start", type: "get", data: {domain: domain_value, profile: profile.value}, dataType: 'json', success: function (result) {
+            if (result.error === '') {
                 request++;
                 progress.open();
                 waitForResult(request);
+            } else {
+                alert(result.error);
             }
         }});
     });
@@ -199,11 +203,12 @@
     function waitForResult(i) {
         if(i === request) {
             $.ajax({
-                url: "ready", type: "get", success: async function (result) {
-                    if (result === "1") {
+                url: "ready", type: "get", dataType: 'json', success: async function (result) {
+                    if (result.finished) {
                         progress.close();
                         location.reload();
                     } else {
+                        $('#scanstatus').text(result.status);
                         await new Promise(r => setTimeout(r, 2000));
                         waitForResult(i);
                     }
