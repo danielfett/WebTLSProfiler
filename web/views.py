@@ -52,7 +52,7 @@ def process_request_data(request: HttpRequest) -> Tuple[str, str, str, str, bool
         sess_profile = request.session["profile"]
 
     if "is_public" in request.GET:
-        is_public = request.GET["is_public"]
+        is_public = request.GET["is_public"] == "true"
 
     return domain, sess_domain, profile, sess_profile, is_public
 
@@ -78,7 +78,7 @@ def index(request: HttpRequest):
         del request.session["task_id"]
 
     recent_scans = (
-        Scan.objects.filter(end_datetime__isnull=True, is_public=True,)
+        Scan.objects.filter(end_datetime__isnull=False, is_public=True,)
         .order_by("-start_datetime")[:NUM_RECENT_SCANS]
         .values_list("domain", flat=True)
     )
@@ -108,11 +108,7 @@ def start_task(request: HttpRequest):
             {"error": "Too many scans in queue, please try again later."}
         )
 
-    if (
-        validators.domain(domain)
-        and profile in _PROFILES
-        and (domain != sess_domain or profile != sess_profile)
-    ):
+    if validators.domain(domain) and profile in _PROFILES:
         # terminate an already running task
         if "task_id" in request.session:
             task_id = request.session["task_id"]
@@ -173,7 +169,7 @@ def task_ready(request: HttpRequest):
                 return JsonResponse(
                     {
                         "finished": False,
-                        "status": f"Waiting in queue ({before} scans before yours)",
+                        "status": f"Waiting in queue ({before} scan(s) before yours)",
                     }
                 )
             else:

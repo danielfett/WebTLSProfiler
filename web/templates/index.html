@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <meta name="theme-color" content="#6200EE">
+    <meta name="theme-color" content="#0062EE">
 
     <title>Web TLS Profiler</title>
 
@@ -31,27 +31,18 @@
         <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
           <span class="mdc-top-app-bar__title">Web TLS Profiler</span>
         </section>
+        <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end" role="toolbar">
+          <a href="https://danielfett.de/imprint/" class="mdc-top-app-bar__action-item" aria-label="Impressum">Imprint and privacy policy</a>
+    </section>
       </div>
     </header>
 
     <div class="row custom-row mdc-top-app-bar--fixed-adjust">
-        <div class="col-12 col-md-6 custom-col">
+        
+        <div class="col-12 col-md-3 custom-col">
             <div class="mdc-card custom-card">
-                <p>The <strong>Web TLS Profiler</strong> is a web interface for the TLS Profiler Python package.
-                    The TLS Profiler scans the TLS settings of a webserver and compares the configuration with a
-                    Mozilla TLS Profile. <br>Mozilla provides three TLS profiles for a different security need and
-                    client support. The Old Profile has the best support for legacy clients, the Intermediate Profile
-                    should be used for the most endpoints and the Modern Profile provides the highest level of security.
-                    You can find a detailed description of the profiles on the Mozilla wiki page
-                    <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" target="_blank">Security/Server Side TLS</a>.
-                    <br>Just enter your domain address in the form field and choose a profile from the dropdown menu.
-                </p>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 custom-col">
-            <div class="mdc-card custom-card">
-                <h2>Run TLS Profiler Scan</h2>
-                <small>Current estimated wait time: {{ waiting_scans }} minutes</small>
+                <h2>Scan Domain</h2>
+                <small>Current estimated wait time: {{ waiting_scans }} minute(s)</small>
 
                 <div class="custom-form">
                     <label class="mdc-text-field form-element">
@@ -84,6 +75,25 @@
                         </div>
                     </div>
 
+                    <div class="mdc-form-field">
+  <div class="mdc-checkbox">
+    <input type="checkbox"
+           class="mdc-checkbox__native-control" checked="checked"
+           id="is_public" name="is_public" />
+    <div class="mdc-checkbox__background">
+      <svg class="mdc-checkbox__checkmark"
+           viewBox="0 0 24 24">
+        <path class="mdc-checkbox__checkmark-path"
+              fill="none"
+              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+      </svg>
+      <div class="mdc-checkbox__mixedmark"></div>
+    </div>
+    <div class="mdc-checkbox__ripple"></div>
+  </div>
+  <label for="is_public">Make public</label>
+</div>
+
                     <button class="mdc-button mdc-button--raised form-element" id="submit">
                         <div class="mdc-button__ripple"></div>
                         <span class="mdc-button__label">Submit</span>
@@ -101,6 +111,31 @@
                             </div>
                     </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-3 custom-col">
+            <div class="mdc-card custom-card">
+                <p><strong>Last Scans</strong></p>
+                <ul>
+                    {% for domain in recent_scans %}
+                    <li>{{ domain }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 custom-col">
+            <div class="mdc-card custom-card">
+                <p><strong>What is this?</strong> This service scans the TLS settings of a web server and compares it to the <a href="https://wiki.mozilla.org/Security/Server_Side_TLS" target="_blank">Mozilla TLS recommendations</a>. 
+                </p>
+                <p><strong>Why is there no grade?</strong> Because that is not the aim of this tool. This tool is for you if you want to achieve compliance with Mozilla's recommandations, but does not produce a grade for your CISO.</p>
+                <p><strong>Why else would I use this?</strong> This tool is quite fast. A scan usually takes about 30 to 60 seconds.
+                </p>
+                <p><strong>But the server is overloaded!</strong> Things happen. Please set up your own (local or public) server, we provide a Docker image for you.
+                </p>
+                <p><strong>How does this work?</strong> This is web interface for the <a href="https://github.com/danielfett/tlsprofiler" target="_blank">TLS Profiler Python package</a>, which uses the <a href="https://github.com/nabla-c0d3/sslyze" target="_blank">sslyze library</a> and other magic. We invite you to contribute to all of these tools!
+                </p>
+                <p><strong>Who made this?</strong> This web interface, the TLS Profiler package, and the yesses tool for which the TLS Profiler was written originally were developed by Fabian Hauck (in his Bachelor's thesis at the <a href="https://sec.uni-stuttgart.de" target="_blank">Institute for Information Security</a> at the University of Stuttgart) and <a href="https://danielfett.de" target="_blank">Daniel Fett</a> (for <a href="https://yes.com" target="_blank">yes.com</a>).
+                </p>
             </div>
         </div>
     </div>
@@ -164,16 +199,6 @@
             </div>
         </div>
     </div>
-    <h2 class="title">About</h2>
-    <div class="row custom-row">
-        <div class="col-12 col-md-6 col-xl-3 custom-col">
-            <div class="mdc-card custom-card">
-                <p>The TLS Profiler was developed by Daniel Fett and Fabian Hauck.
-                    You can find it's source code on <a href="https://github.com/danielfett/tlsprofiler" target="_blank">GitHub</a>.
-                    This website was created by Fabian Hauck.</p>
-            </div>
-        </div>
-    </div>
 </body>
 
 <script>
@@ -183,13 +208,21 @@
 
     const profile = new mdc.select.MDCSelect(document.querySelector(".mdc-select"));
     const domain = new mdc.textField.MDCTextField(document.querySelector('.mdc-text-field'));
+    const checkbox = new mdc.checkbox.MDCCheckbox(document.querySelector('.mdc-checkbox'));
+    const formField = new mdc.formField.MDCFormField(document.querySelector('.mdc-form-field'));
+    formField.input = checkbox;
     const progress = new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));
 
     var request = 0; // use counter to prevent to many GET request if multiple scans were requested
 
     $("#submit").click(function() {
         domain_value = document.getElementById("domain").value;
-        $.ajax({url: "start", type: "get", data: {domain: domain_value, profile: profile.value}, dataType: 'json', success: function (result) {
+        is_public = document.getElementById("is_public").checked;
+        $.ajax({url: "start", type: "get", data: {
+            domain: domain_value,
+            profile: profile.value,
+            is_public: is_public
+        }, dataType: 'json', success: function (result) {
             if (result.error === '') {
                 request++;
                 progress.open();
