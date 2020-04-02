@@ -165,7 +165,7 @@ def task_ready(request: HttpRequest):
                 .filter(start_datetime__lt=scan.start_datetime, end_datetime=None,)
                 .count()
             )
-            if before > 0:
+            if before > 9:
                 return JsonResponse(
                     {
                         "finished": False,
