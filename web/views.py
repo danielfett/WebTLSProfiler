@@ -26,10 +26,17 @@ NUM_RECENT_SCANS = 10
 
 @task(name="run_tls_profiler")
 def run_scan(domain: str, profile: str) -> TLSProfilerResult:
-    profiler = TLSProfiler(domain, profile)
-    result = profiler.run()
-    result = dataclasses.asdict(result)
-    return result
+    result = None
+    try:
+        profiler = TLSProfiler(domain, profile)
+        result = profiler.run()
+    except Exception as e:
+        return {"error": e}
+
+    if result is None:
+        return {"error": profiler.server_error}
+
+    return dataclasses.asdict(result)
 
 
 def process_request_data(request: HttpRequest) -> Tuple[str, str, str, str, bool]:

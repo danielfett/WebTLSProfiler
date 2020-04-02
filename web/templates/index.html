@@ -141,7 +141,19 @@
             </div>
         </div>
     </div>
-    {% if result %}
+    
+    {% if result and result.error %}
+    <h2 class="title">Error</h2>
+        <div class="row custom-row">
+        <div class="col-12 col-md-6 col-xl-3 custom-col">
+          <div class="mdc-card custom-card">
+            {{ result.error }}
+          </div>
+        </div>
+        </div>
+        
+    {% elif result %}
+    
     <h2 class="title">Results</h2>
     <div class="row custom-row">
         <div class="col-12 col-md-6 col-xl-3 custom-col">
