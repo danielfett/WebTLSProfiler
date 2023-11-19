@@ -1,35 +1,14 @@
-FROM python:3.7-buster
+FROM python:3.8-slim-buster
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y redis && apt-get clean
 
 WORKDIR /usr/src
 
-RUN git clone https://github.com/fabian-hk/nassl.git
-
-WORKDIR /usr/src/nassl
-
-RUN git checkout tls_profiler
-
-RUN pip install invoke requests
-
-RUN invoke build.all
-
-RUN pip install .
-
-COPY requirements.txt .
-
-RUN pip install -r requirements.txt
-
-FROM python:3.7-slim-buster
-
-RUN apt-get update && apt-get install -y redis && apt-get clean
-RUN pip install gunicorn celery
-
-COPY --from=0 /usr/local/lib/python3.7/ /usr/local/lib/python3.7/
+ADD . /usr/src/webtlsprofiler
 
 WORKDIR /usr/src/webtlsprofiler
 
-COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
 RUN chown -R 1000:2000 /usr/src/webtlsprofiler
 

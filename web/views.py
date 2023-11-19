@@ -1,8 +1,8 @@
 from typing import Tuple
-
+import traceback
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpRequest, HttpResponse, JsonResponse
-from celery.decorators import task
+from celery import shared_task as task
 from celery.result import AsyncResult
 import dataclasses
 import validators
@@ -28,15 +28,23 @@ NUM_RECENT_SCANS = 10
 def run_scan(domain: str, profile: str) -> TLSProfilerResult:
     result = None
     try:
-        profiler = TLSProfiler(domain, profile)
-        result = profiler.run()
+        profiler = TLSProfiler(domain)
+        profiler.scan_server()
+        result = profiler.compare_to_profile(profile)
     except Exception as e:
-        return {"error": e}
+        # print error with traceback
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return {"error": str(e)}
 
     if result is None:
-        return {"error": profiler.server_error}
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return {"error": str(profiler.server_error)}
 
-    return dataclasses.asdict(result)
+    try:
+        return dataclasses.asdict(result)
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return {"error": str(e)}
 
 
 def process_request_data(request: HttpRequest) -> Tuple[str, str, str, str, bool]:

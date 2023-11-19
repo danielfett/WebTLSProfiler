@@ -1,7 +1,6 @@
-git+https://github.com/fabian-hk/tlsprofiler.git@master
-git+https://github.com/fabian-hk/sslyze.git@tls_profiler
 Django
-celery
+celery==5.3.5
 redis
 validators
 gunicorn
+tlsprofiler
